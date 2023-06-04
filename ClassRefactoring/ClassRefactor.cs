@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace DeveloperSample.ClassRefactoring
 {
@@ -22,6 +23,17 @@ namespace DeveloperSample.ClassRefactoring
         public SwallowType Type { get; }
         public SwallowLoad Load { get; private set; }
 
+        private static readonly Dictionary<SwallowType, int> SwallowTypeCost = new()
+        {
+            {SwallowType.African, 18},
+            {SwallowType.European, 16}
+        };
+        private static readonly Dictionary<SwallowLoad, int> SwallowLoadCost = new()
+        {
+            {SwallowLoad.Coconut, 0},
+            {SwallowLoad.None, 4},
+        };
+
         public Swallow(SwallowType swallowType)
         {
             Type = swallowType;
@@ -34,22 +46,8 @@ namespace DeveloperSample.ClassRefactoring
 
         public double GetAirspeedVelocity()
         {
-            if (Type == SwallowType.African && Load == SwallowLoad.None)
-            {
-                return 22;
-            }
-            if (Type == SwallowType.African && Load == SwallowLoad.Coconut)
-            {
-                return 18;
-            }
-            if (Type == SwallowType.European && Load == SwallowLoad.None)
-            {
-                return 20;
-            }
-            if (Type == SwallowType.European && Load == SwallowLoad.Coconut)
-            {
-                return 16;
-            }
+            if (SwallowTypeCost.ContainsKey(Type) && SwallowLoadCost.ContainsKey(Load))
+                return SwallowTypeCost[Type] + SwallowLoadCost[Load];
             throw new InvalidOperationException();
         }
     }
