@@ -1,28 +1,24 @@
 using System;
+using System.Collections.Generic;
 
 namespace DeveloperSample.Container
 {
     public class Container
     {
-        private IContainerTestInterface Dependency;
-
-        internal Container(IContainerTestInterface dependency)
-        {
-            Dependency = dependency;
-        }
+        Dictionary<Type, Type> containers = new();
 
         public void Bind(Type interfaceType, Type implementationType)
         {
-
+            containers.Add(interfaceType, implementationType);
         }
         public T Get<T>()
         {
-            Type type1 = typeof(T);
-            Type type2 = typeof(IContainerTestInterface);
-            if (type1.IsAssignableFrom(type2)) {
-                return (T) Dependency;
+            if (containers.ContainsKey(typeof(T)))
+            {
+                Type t = containers[typeof(T)];
+                return (T)Activator.CreateInstance(t);
             }
-            throw new ArgumentException();
+            throw new InvalidOperationException();
         }
     }
 }
