@@ -12,11 +12,15 @@ namespace DeveloperSample.Syncing
         public List<string> InitializeList(IEnumerable<string> items)
         {
             var bag = new ConcurrentBag<string>();
+            var tasks = new ConcurrentBag<Task>();
             Parallel.ForEach(items, async i =>
             {
-                var r = await Task.Run(() => i).ConfigureAwait(false);
+                var t = Task.Run(() => i);
+                tasks.Add(t);
+                var r = await t;
                 bag.Add(r);
             });
+            Task.WaitAll(tasks.ToArray());
             var list = bag.ToList();
             return list;
         }
